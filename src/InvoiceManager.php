@@ -469,7 +469,7 @@ class InvoiceManager
         $body = $this->sendRequestAndGetBody(self::DISPATCH_PATH, $parameters);
         $this->checkError($body);
 
-        if ($body["data"] != "Fatura başarıyla taslaklara eklenmiştir.") {
+        if ($body["data"] != "Faturanız başarıyla oluşturulmuştur. Düzenlenen Belgeler menüsünden faturanıza ulaşabilirsiniz.") {
             throw new ApiException("Fatura oluşturulamadı.", 0, null, $body);
         }
 
@@ -559,7 +559,7 @@ class InvoiceManager
         $body = $this->sendRequestAndGetBody(self::DISPATCH_PATH, $parameters);
         $this->checkError($body);
 
-        if ($body["data"] != "İptal edildi.") {
+        if (strpos($body["data"], " fatura başarıyla silindi.") == false) {
             throw new ApiException("Fatura iptal edilemedi.", 0, null, $body);
         }
 
@@ -668,6 +668,36 @@ class InvoiceManager
     }
 
     /**
+     * Get Invoices from API
+     *
+     * @param string $startDate
+     * @param string $endDate
+     * @param array $ettn
+     * @return array
+     */
+    public function getEttnInvoiceFromAPIArray($startDate, $endDate, $ettn)
+    {
+        $parameters = [
+            "cmd" => "EARSIV_PORTAL_TASLAKLARI_GETIR",
+            "callid" => Uuid::uuid1()->toString(),
+            "pageName" => "RG_BASITTASLAKLAR",
+            "token" => $this->token,
+            "jp" => '{"baslangic":"' . $startDate . '","bitis":"' . $endDate . '","hangiTip":"5000/30000", "table":[]}'
+        ];
+        $body = $this->sendRequestAndGetBody(self::DISPATCH_PATH, $parameters);
+        $this->checkError($body);
+        $data = $body['data'];
+        $dataFiltered = array();
+        foreach($data as $item){
+	        if($item["onayDurumu"] == "Onaylanmadı" AND in_array($item["ettn"], $ettn)){
+		        array_push($dataFiltered, $item);
+	        }
+        }
+        $this->invoices = $dataFiltered;
+        return $dataFiltered;
+    }
+
+    /**
      * Send user informations data
      *
      * @param Invoice $invoice
@@ -752,6 +782,16 @@ class InvoiceManager
 
         $body = $this->sendRequestAndGetBody(self::DISPATCH_PATH, $parameters);
         $this->checkError($body);
+
+        if(!isset($body["data"]["sonuc"]))
+        {
+            return false;
+        }
+        
+        if($body["data"]["sonuc"] == 0)
+        {
+            return false;
+        }
 
         return true;
     }

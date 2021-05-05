@@ -24,6 +24,10 @@ https://earsivportaltest.efatura.gov.tr/login.jsp
 **Paket Kurulumu:**
 
     composer require furkankadioglu/efatura
+    
+### 📲 Destek ve Sorular 
+
+Eğer bir sorun yaşıyorsanız veya proje hakkında bir sorunuz varsa lütfen [buradan](https://github.com/furkankadioglu/efatura/issues/new "buradan") bir kayıt oluşturun, yaşadığınız sorunu hep birlikte çözelim.
 
 
 ### 🚩Özellikler
@@ -148,7 +152,6 @@ $fatura_detaylari["malHizmetTable"][] = [
 "birim"  =>  "DAY",
 "birimFiyat"  =>  "3",
 "fiyat"  =>  "84",
-"iskontoArttm"  =>  "İskonto",
 "iskontoOrani"  =>  0,
 "iskontoTutari"  =>  "0",
 "iskontoNedeni"  =>  "",
@@ -157,6 +160,7 @@ $fatura_detaylari["malHizmetTable"][] = [
 "vergiOrani" => 0,
 "kdvTutari"  =>  "15.12",
 "vergininKdvTutari"  =>  "0"
+"ozelMatrahTutari" => "0", //zorunlu
 ];
 ```
 Değişkenler Türkçe olduğundan dolayı **mapWithTurkishKeys** fonksiyonunu kullanıyoruz.
